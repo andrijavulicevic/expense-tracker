@@ -7,12 +7,15 @@ const globalForPrisma = globalThis as unknown as {
   pool: Pool | undefined;
 };
 
-const connectionString = process.env.POSTGRES_URL!;
-
 const pool =
   globalForPrisma.pool ??
   new Pool({
-    connectionString,
+    host: process.env.POSTGRES_HOST!,
+    port: 6543,
+    user: process.env.POSTGRES_USER!,
+    password: process.env.POSTGRES_PASSWORD!,
+    database: process.env.POSTGRES_DATABASE!,
+    ssl: true,
     max: 1,
   });
 

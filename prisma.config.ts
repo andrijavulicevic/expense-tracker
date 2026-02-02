@@ -10,9 +10,6 @@ export default defineConfig({
     seed: "tsx prisma/seed.ts",
   },
   datasource: {
-    url:
-      process.env["NODE"] !== "production"
-        ? process.env["POSTGRES_URL_NON_POOLING"]
-        : process.env["POSTGRES_URL"],
+    url: process.env["POSTGRES_URL_NON_POOLING"],
   },
 });
