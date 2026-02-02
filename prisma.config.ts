@@ -7,9 +7,12 @@ export default defineConfig({
   schema: "prisma/schema.prisma",
   migrations: {
     path: "prisma/migrations",
-     seed: 'tsx prisma/seed.ts',
+    seed: "tsx prisma/seed.ts",
   },
   datasource: {
-    url: process.env["POSTGRES_URL_NON_POOLING"],
+    url:
+      process.env["NODE"] !== "production"
+        ? process.env["POSTGRES_URL_NON_POOLING"]
+        : process.env["POSTGRES_URL"],
   },
 });
