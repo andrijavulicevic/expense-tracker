@@ -15,7 +15,7 @@ const pool =
     connectionString,
     ssl:
       process.env.NODE_ENV === "production"
-        ? { rejectUnauthorized: true }
+        ? { rejectUnauthorized: false }
         : { rejectUnauthorized: false },
     max: 1, // Good for serverless
   });
