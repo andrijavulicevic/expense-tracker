@@ -8,6 +8,17 @@ import {
   updateCategorySchema,
 } from "@/lib/validations/category";
 import { validateWithJoi } from "@/lib/utils/validation";
+import { Prisma } from "@prisma/client";
+
+type CategoryWithExpenseCount = Prisma.CategoryGetPayload<{
+  include: {
+    _count: {
+      select: {
+        expenses: true;
+      };
+    };
+  };
+}>;
 
 export async function createCategory(formData: FormData) {
   try {
@@ -273,7 +284,7 @@ export async function bulkDeleteCategories(ids: string[]) {
       return { error: "You must be logged in to delete categories" };
     }
 
-    const categories = await prisma.category.findMany({
+    const categories = (await prisma.category.findMany({
       where: {
         id: { in: ids },
         userId: session.user.id,
@@ -285,7 +296,7 @@ export async function bulkDeleteCategories(ids: string[]) {
           },
         },
       },
-    });
+    })) as CategoryWithExpenseCount[];
 
     const categoriesWithExpenses = categories.filter(
       (c) => c._count.expenses > 0,
