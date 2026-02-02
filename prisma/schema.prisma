@@ -1,0 +1,64 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id           String     @id @default(cuid())
+  email        String     @unique
+  name         String?
+  passwordHash String
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  categories   Category[]
+  sessions     Session[]
+  expenses     Expense[]
+
+  @@map("users")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+
+model Expense {
+  id          String   @id @default(cuid())
+  amount      Decimal  @db.Decimal(10, 2)
+  description String
+  date        DateTime
+  categoryId  String
+  userId      String
+  receiptUrl  String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  category    Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, date])
+  @@index([categoryId])
+  @@map("expenses")
+}
+
+model Category {
+  id       String    @id @default(cuid())
+  name     String
+  color    String    @default("#3B82F6")
+  icon     String?
+  userId   String
+  budget   Decimal?  @db.Decimal(10, 2)
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expenses Expense[]
+
+  @@unique([userId, name])
+  @@map("categories")
+}
